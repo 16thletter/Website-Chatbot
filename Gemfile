@@ -60,3 +60,4 @@ end
 
 gem "httparty"
 gem "nokogiri"
+gem "sidekiq"
