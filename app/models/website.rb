@@ -8,7 +8,8 @@ class Website < ApplicationRecord
 
   def generate_context(question)
     question_embedding = OllamaEmbeddingService.embed(question)
-    results = page_chunks.order(Arel.sql("embedding <-> '#{question_embedding.to_json}'")).limit(5)
+    results = page_chunks.order(Arel.sql("embedding <-> '#{question_embedding.to_json}'"))
+
     results.map do |chunk|
       heading = chunk.try(:heading) || "Section"
       "#{heading}\n#{chunk.content.strip}"
