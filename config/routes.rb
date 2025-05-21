@@ -18,4 +18,8 @@ Rails.application.routes.draw do
   resources :websites, only: [] do
     post :analyze, on: :collection
   end
+
+  resources :chatbot, only: :show do
+    post :ask, on: :member
+  end
 end

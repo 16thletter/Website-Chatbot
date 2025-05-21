@@ -1,8 +1,6 @@
 class WebsitesController < ApplicationController
   def analyze
-    scraper = WebScraper.new(params[:url])
-    content = scraper.extract_text
-    website = Website.create!(url: params[:url], last_viewed_at: Time.current, content:)
+    website = Website.create!(url: params[:url], last_viewed_at: Time.current)
     redirect_to chatbot_path(website)
   end
 end
