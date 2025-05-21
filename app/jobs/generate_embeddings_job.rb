@@ -5,8 +5,7 @@ class GenerateEmbeddingsJob < ApplicationJob
     website = Website.find_by(id:)
     return unless website
 
-    text = WebScraper.new(website.url).extract_text
-    vector = OllamaEmbeddingService.embed(text).to_s
-    website.page_chunks.create!(embedding: vector, content: text)
+    scraper = WebScraper.new(website.url, website_id: website.id)
+    scraper.extract_and_save_chunks
   end
 end

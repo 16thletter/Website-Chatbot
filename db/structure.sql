@@ -49,7 +49,8 @@ CREATE TABLE public.page_chunks (
     content text,
     embedding public.vector,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    heading character varying
 );
 
 
@@ -181,6 +182,7 @@ ALTER TABLE ONLY public.page_chunks
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250521080430'),
 ('20250519152130'),
 ('20250516081644'),
 ('20250516075949');
