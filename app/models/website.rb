@@ -1,5 +1,7 @@
 class Website < ApplicationRecord
   has_many :page_chunks
+  has_many :questions
+
   after_create_commit :generate_embedding
 
   def generate_embedding

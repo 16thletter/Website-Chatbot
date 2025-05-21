@@ -1,6 +1,7 @@
 class ChatbotService
   def initialize(context, question)
-    @prompt = PromptBuilder.build(context, question)
+    @question = question
+    @prompt = PromptBuilder.build(context, question.title)
     @url = ENV.fetch("LLAMA_RESPONSE_GENERATE_API", "http://localhost:11434/api/generate")
   end
 
@@ -8,7 +9,7 @@ class ChatbotService
     response = HTTParty.post(@url, headers:, body:)
 
     if response.success?
-      response.parsed_response["response"]
+      @question.create_answer(content: response.parsed_response["response"])
     else
       raise "Error: #{response.code} - #{response.message}"
     end
