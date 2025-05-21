@@ -8,7 +8,10 @@ class Website < ApplicationRecord
 
   def generate_context(question)
     question_embedding = OllamaEmbeddingService.embed(question)
-    results = page_chunks.order(Arel.sql("embedding <-> '#{question_embedding.to_json}'"))
+    embedding_json = question_embedding.to_json
+    order_clause = ActiveRecord::Base.send(:sanitize_sql_array, [ "embedding <-> ?", embedding_json ])
+
+    results = page_chunks.order(Arel.sql(order_clause))
 
     results.map do |chunk|
       heading = chunk.try(:heading) || "Section"
