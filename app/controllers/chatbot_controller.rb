@@ -1,4 +1,6 @@
 class ChatbotController < ApplicationController
+  include PreviousInfo
+
   before_action :store_question, only: :ask
   def show
     @website = Website.find(params[:id])

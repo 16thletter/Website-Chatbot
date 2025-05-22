@@ -1,0 +1,36 @@
+<aside id="sidebar" data-controller="sidebar" data-sidebar-target="sidebar" class="w-64 bg-white border-r h-full overflow-y-auto p-4 space-y-6 shadow transition-width duration-300">
+  <div class="flex justify-between items-center mb-4">
+    <div class="new-chat-link">
+      <a href="<%= root_path %>" class="block text-neutral-800 font-bold text-lg hover:underline">
+        + New Chat
+      </a>
+    </div>
+    <button 
+      data-action="click->sidebar#toggle" 
+      aria-label="Toggle sidebar" 
+      class="text-gray-500 hover:text-gray-700 focus:outline-none"
+    >
+      <svg id="toggleIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+        viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+  </div>
+
+  <% @grouped_websites.each do |label, websites| %>
+    <div>
+      <h2 class="text-xs font-semibold text-gray-500 uppercase mb-2 mt-4"><%= label %></h2>
+      <ul class="space-y-1">
+        <% websites.each do |website| %>
+          <li>
+            <a href="<%= chatbot_path(website) %>"
+              class="block px-3 py-1 rounded hover:bg-gray-100 text-sm truncate text-blue-600">
+              <%= website.url %>
+            </a>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+</aside>
