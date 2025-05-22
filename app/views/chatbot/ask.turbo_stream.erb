@@ -1,0 +1,21 @@
+<turbo-stream action="append" target="chat-thread">
+  <template>
+    <!-- Append user's question -->
+    <div class="flex justify-end">
+      <div class="bg-black text-white p-4 rounded-2xl max-w-md shadow-md">
+        <p><%= @question.title %></p>
+      </div>
+    </div>
+
+    <!-- Append generated answer or fallback -->
+    <div class="flex justify-start">
+      <div class="bg-gray-100 text-gray-800 p-4 rounded-2xl max-w-md shadow-md">
+        <% if @answer.present? %>
+          <%= markdown(@answer.content) %>
+        <% else %>
+          <span class="italic text-gray-500">No answer was generated.</span>
+        <% end %>
+      </div>
+    </div>
+  </template>
+</turbo-stream>

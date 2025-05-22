@@ -28,6 +28,38 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- Name: answers; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.answers (
+    id bigint NOT NULL,
+    content text,
+    question_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: answers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.answers_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: answers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.answers_id_seq OWNED BY public.answers.id;
+
+
+--
 -- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -74,6 +106,38 @@ ALTER SEQUENCE public.page_chunks_id_seq OWNED BY public.page_chunks.id;
 
 
 --
+-- Name: questions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.questions (
+    id bigint NOT NULL,
+    title text,
+    website_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: questions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.questions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: questions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.questions_id_seq OWNED BY public.questions.id;
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -115,6 +179,13 @@ ALTER SEQUENCE public.websites_id_seq OWNED BY public.websites.id;
 
 
 --
+-- Name: answers id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.answers ALTER COLUMN id SET DEFAULT nextval('public.answers_id_seq'::regclass);
+
+
+--
 -- Name: page_chunks id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -122,10 +193,25 @@ ALTER TABLE ONLY public.page_chunks ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
+-- Name: questions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.questions ALTER COLUMN id SET DEFAULT nextval('public.questions_id_seq'::regclass);
+
+
+--
 -- Name: websites id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.websites ALTER COLUMN id SET DEFAULT nextval('public.websites_id_seq'::regclass);
+
+
+--
+-- Name: answers answers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.answers
+    ADD CONSTRAINT answers_pkey PRIMARY KEY (id);
 
 
 --
@@ -145,6 +231,14 @@ ALTER TABLE ONLY public.page_chunks
 
 
 --
+-- Name: questions questions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.questions
+    ADD CONSTRAINT questions_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -161,10 +255,40 @@ ALTER TABLE ONLY public.websites
 
 
 --
+-- Name: index_answers_on_question_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_answers_on_question_id ON public.answers USING btree (question_id);
+
+
+--
 -- Name: index_page_chunks_on_website_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_page_chunks_on_website_id ON public.page_chunks USING btree (website_id);
+
+
+--
+-- Name: index_questions_on_website_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_questions_on_website_id ON public.questions USING btree (website_id);
+
+
+--
+-- Name: questions fk_rails_3364f29bdc; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.questions
+    ADD CONSTRAINT fk_rails_3364f29bdc FOREIGN KEY (website_id) REFERENCES public.websites(id);
+
+
+--
+-- Name: answers fk_rails_3d5ed4418f; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.answers
+    ADD CONSTRAINT fk_rails_3d5ed4418f FOREIGN KEY (question_id) REFERENCES public.questions(id);
 
 
 --
@@ -182,6 +306,8 @@ ALTER TABLE ONLY public.page_chunks
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250521120754'),
+('20250521120612'),
 ('20250521080430'),
 ('20250519152130'),
 ('20250516081644'),
