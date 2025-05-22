@@ -15,7 +15,7 @@ Rails.application.routes.draw do
 
   root "home#index"
 
-  resources :websites, only: [] do
+  resources :websites, only: :show do
     post :analyze, on: :collection
   end
 

@@ -19,8 +19,16 @@
   </head>
 
   <body class="bg-gray-100 min-h-screen flex flex-col">
-    <main class="flex-grow flex items-center justify-center px-4">
-      <%= yield %>
+    <main class="flex-grow flex">
+      <% if content_for?(:sidebar) %>
+        <aside class="w-64 bg-white border-r border-gray-200 overflow-y-auto p-4">
+          <%= yield :sidebar %>
+        </aside>
+      <% end %>
+
+      <section class="flex-grow overflow-y-auto">
+        <%= yield %>
+      </section>
     </main>
   </body>
 </html>

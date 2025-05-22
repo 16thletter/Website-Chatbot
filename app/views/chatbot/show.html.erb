@@ -1,67 +1,66 @@
-<!-- Chat container -->
-<div class="w-full max-w-2xl mx-auto pt-6 pb-32">
-  <h1 class="text-3xl font-semibold mb-4 text-center text-gray-900">
-    Ask about:
-  </h1>
-  <p class="text-center text-red-600 text-lg break-words mb-8"><%= @website.url %></p>
+<div class="flex h-screen">
+  <%= render 'shared/sidebar' %>
 
-  <!-- Chat thread -->
-  <div id="chat-thread" class="space-y-6 overflow-y-auto pr-4" data-controller="chat-scroll", style="max-height: 60vh;">
-    <% @website.questions.includes(:answer).order(created_at: :asc).each do |question| %>
-      <!-- User Message -->
-      <div class="flex justify-end">
-        <div class="bg-black text-white p-4 rounded-2xl max-w-md shadow-md">
-          <p><%= question.title %></p>
-        </div>
+   <main class="flex-1 p-6 overflow-y-auto">
+    <!-- Chat container -->
+    <div class="w-full max-w-2xl mx-auto pt-6 pb-32">
+      <h1 class="text-3xl font-semibold mb-4 text-center text-gray-900">Ask about:</h1>
+      <p class="text-center text-red-600 text-lg break-words mb-8"><%= @website.url %></p>
+
+      <!-- Chat thread -->
+      <div id="chat-thread" class="space-y-6 overflow-y-auto pr-4" data-controller="chat-scroll" style="max-height: 60vh;">
+        <% @website.questions.includes(:answer).order(created_at: :asc).each do |question| %>
+          <div class="flex justify-end">
+            <div class="bg-black text-white p-4 rounded-2xl max-w-md shadow-md">
+              <p><%= question.title %></p>
+            </div>
+          </div>
+
+          <% if question.answer.present? %>
+            <div class="flex justify-start">
+              <div class="bg-gray-100 text-gray-800 p-4 rounded-2xl max-w-md shadow-md">
+                <%= markdown(question.answer.content) %>
+              </div>
+            </div>
+          <% else %>
+            <div class="flex justify-start">
+              <div class="bg-gray-100 text-gray-500 italic p-4 rounded-2xl max-w-md shadow-md animate-pulse">
+                Answer is being generated<span class="dot-flash"></span>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
       </div>
 
-      <!-- Bot Answer -->
-      <% if question.answer.present? %>
-        <div class="flex justify-start">
-          <div class="bg-gray-100 text-gray-800 p-4 rounded-2xl max-w-md shadow-md">
-            <%= markdown(question.answer.content) %>
-          </div>
-        </div>
-      <% else %>
-        <div class="flex justify-start">
-          <div class="bg-gray-100 text-gray-500 italic p-4 rounded-2xl max-w-md shadow-md animate-pulse">
-            Answer is being generated<span class="dot-flash"></span>
-          </div>
+      <% if flash[:alert] %>
+        <div class="mt-6 text-red-600 font-semibold text-center">
+          <%= flash[:alert] %>
         </div>
       <% end %>
-    <% end %>
-  </div>
-
-  <!-- Flash alert -->
-  <% if flash[:alert] %>
-    <div class="mt-6 text-red-600 font-semibold text-center">
-      <%= flash[:alert] %>
     </div>
-  <% end %>
-</div>
 
-<!-- Fixed input form -->
-<div class="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 px-4 py-3 z-50"
-     data-controller="chat-form">
-  <%= form_with url: ask_chatbot_path(@website),
-                method: :post,
-                data: {
-                  turbo: true,
-                  chat_form_target: "form", # 👈 add this!
-                  action: "turbo:submit-start->chat-form#submitStart turbo:submit-end->chat-form#submitEnd"
-                },
-                class: "flex gap-2 max-w-2xl mx-auto",
-                id: "chat-form" do %>
+    <!-- Fixed input form -->
+    <div class="fixed bottom-0 left-64 w-[calc(100%-16rem)] bg-white border-t border-gray-200 px-4 py-3 z-50"
+         data-controller="chat-form">
+      <%= form_with url: ask_chatbot_path(@website), method: :post, data: {
+            turbo: true,
+            chat_form_target: "form",
+            action: "turbo:submit-start->chat-form#submitStart turbo:submit-end->chat-form#submitEnd"
+          },
+          class: "flex gap-2 max-w-2xl mx-auto",
+          id: "chat-form" do %>
 
-    <%= text_area_tag :question, nil,
-      rows: 1,
-      placeholder: "Type your question...",
-      class: "flex-grow p-3 rounded-xl border border-gray-300 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-black resize-none",
-      autocomplete: "off" %>
+        <%= text_area_tag :question, nil,
+          rows: 1,
+          placeholder: "Type your question...",
+          class: "flex-grow p-3 rounded-xl border border-gray-300 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-black resize-none",
+          autocomplete: "off" %>
 
-    <%= submit_tag "Send",
-      class: "bg-black text-white px-4 py-2 rounded-xl hover:bg-neutral-800",
-      id: "send-button",
-      data: { chat_form_target: "submit" } %>
-  <% end %>
+        <%= submit_tag "Send",
+          class: "bg-black text-white px-4 py-2 rounded-xl hover:bg-neutral-800",
+          id: "send-button",
+          data: { chat_form_target: "submit" } %>
+      <% end %>
+    </div>
+  </main>
 </div>

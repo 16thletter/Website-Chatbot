@@ -15,3 +15,30 @@
   100% { content: '...'; }
 }
   
+/* Add in your stylesheet or inside a <style> tag */
+#sidebar.collapsed {
+  width: 4rem !important; /* narrow width */
+  overflow-x: hidden;
+  /* you can hide text, adjust padding etc */
+}
+
+#sidebar.collapsed a {
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+  text-align: center;
+}
+
+#sidebar.collapsed h2,
+#sidebar.collapsed ul {
+  display: none; /* hide labels and list for compact */
+}
+
+/* Optional: rotate icon when collapsed */
+#sidebar.collapsed #toggleIcon {
+  transform: rotate(180deg);
+  transition: transform 0.3s ease;
+}
+
+#sidebar.collapsed .new-chat-link {
+  display: none;
+}
