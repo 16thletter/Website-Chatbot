@@ -19,7 +19,8 @@ Rails.application.routes.draw do
     post :analyze, on: :collection
   end
 
-  resources :chatbot, only: :show do
-    post :ask, on: :member
-  end
+  get "/chatbot/:id", to: "chatbot#show", as: :chatbot
+  post "/chatbot/:id", to: "chatbot#ask", as: :ask_chatbot
+
+  resources :documents, only: [ :create ]
 end

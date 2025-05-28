@@ -9,9 +9,14 @@ class OllamaEmbeddingService
       raise "Ollama embedding HTTP error: #{response.code} #{response.body}"
     end
 
-    response.parsed_response["embedding"]
+    normalize_vector(response.parsed_response["embedding"])
 
   rescue JSON::ParserError => e
     raise "Failed to parse embedding output: #{e.message}"
+  end
+
+  def self.normalize_vector(embedding)
+    norm = Math.sqrt(vec.sum { |x| x**2 })
+    norm.zero? ? vec : vec.map { |x| x / norm }
   end
 end

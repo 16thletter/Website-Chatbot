@@ -15,7 +15,6 @@ namespace :pdf do
       print "🔢 Embedding chunk #{i + 1}/#{chunks.size}... "
 
       embedding = generate_embedding(chunk[:content])
-      embedding = normalize_vector(embedding)
 
       PageChunk.create!(
         website:     website,
@@ -34,10 +33,5 @@ namespace :pdf do
 
   def generate_embedding(text)
     OllamaEmbeddingService.embed(text)
-  end
-
-  def normalize_vector(vec)
-    norm = Math.sqrt(vec.sum { |x| x**2 })
-    norm.zero? ? vec : vec.map { |x| x / norm }
   end
 end

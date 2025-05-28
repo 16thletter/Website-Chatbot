@@ -24,6 +24,6 @@ class ChatbotService
   end
 
   def body
-    { model: "llama3.2", prompt: @prompt, stream: false, temperature: 0.3 }.to_json
+    { model: "mistral", prompt: @prompt, stream: false, temperature: 0.3 }.to_json
   end
 end

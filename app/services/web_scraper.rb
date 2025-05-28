@@ -71,7 +71,7 @@ class WebScraper
         website: @website,
         heading: heading,
         content: chunk_text,
-        embedding: embedding.to_s
+        embedding: embedding
       )
     end
   rescue => e

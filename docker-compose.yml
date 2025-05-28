@@ -1,0 +1,74 @@
+services:
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: website_chatbot_development
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data 
+
+  web-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: bash -c "until pg_isready -h db -p 5432; do echo 'Waiting for db...'; sleep 1; done; ./bin/dev"
+    volumes:
+      - .:/rails
+      - bundle_cache:/usr/local/bundle
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - redis
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgres://postgres:password@db:5432/website_chatbot_development
+      REDIS_URL: redis://redis:6379/1
+      DB_USERNAME: postgres
+      DB_PASSWORD: password
+      DB_HOST: db
+      LLAMA_RESPONSE_GENERATE_API: http://host.docker.internal:11434/api/generate
+    tty: true   # <-- Add it here
+
+  sidekiq-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: bundle exec sidekiq
+    volumes:
+      - .:/rails
+      - bundle_cache:/usr/local/bundle
+    depends_on:
+      - db
+      - redis
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgres://postgres:password@db:5432/website_chatbot_development
+      REDIS_URL: redis://redis:6379/1
+      EMBEDDING_SERVER_URL: http://host.docker.internal:5001/embed
+    tty: true   # <-- Add it here as well if needed
+
+  css_assets:
+    build:
+      context: .
+    command: bash -c "yarn install && yarn build:css --watch"
+    volumes:
+      - .:/rails
+      - bundle_cache:/usr/local/bundle
+
+volumes:
+  db_data:
+  bundle_cache:
+  redis_data:

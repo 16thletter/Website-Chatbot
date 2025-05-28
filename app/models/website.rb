@@ -9,19 +9,12 @@ class Website < ApplicationRecord
   end
 
   def generate_context(question)
-    question_embedding = normalise(OllamaEmbeddingService.embed(question))
+    question_embedding = OllamaEmbeddingService.embed(question)
 
-    results = PageChunk.nearest_neighbors(:embedding, question_embedding, distance: "euclidean").first(5)
+    results = page_chunks.nearest_neighbors(:embedding, question_embedding, distance: "euclidean").first(10)
 
     results.map do |pc|
       "Page #{pc.page} – #{pc.heading}\n#{pc.content}"
     end.join("\n---\n")[0..2000]
-  end
-
-  private
-
-  def normalise(vec)
-    norm = Math.sqrt(vec.map { |x| x * x }.sum)
-    norm.zero? ? vec : vec.map { |x| x / norm }
   end
 end

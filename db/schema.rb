@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_27_121749) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_28_110331) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -23,6 +23,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_27_121749) do
     t.index ["question_id"], name: "index_answers_on_question_id"
   end
 
+  create_table "documents", force: :cascade do |t|
+    t.string "title"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "page_chunks", force: :cascade do |t|
     t.bigint "website_id", null: false
     t.text "content"
@@ -32,6 +38,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_27_121749) do
     t.vector "embedding", limit: 768
     t.integer "page"
     t.integer "chunk_index"
+    t.bigint "document_id"
+    t.index ["document_id"], name: "index_page_chunks_on_document_id"
     t.index ["website_id"], name: "index_page_chunks_on_website_id"
   end
 
@@ -51,6 +59,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_27_121749) do
   end
 
   add_foreign_key "answers", "questions"
+  add_foreign_key "page_chunks", "documents"
   add_foreign_key "page_chunks", "websites"
   add_foreign_key "questions", "websites"
 end
