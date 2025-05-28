@@ -9,15 +9,19 @@ class Website < ApplicationRecord
   end
 
   def generate_context(question)
-    question_embedding = OllamaEmbeddingService.embed(question)
-    embedding_json = question_embedding.to_json
-    order_clause = ActiveRecord::Base.send(:sanitize_sql_array, [ "embedding <-> ?", embedding_json ])
+    question_embedding = normalise(OllamaEmbeddingService.embed(question))
 
-    results = page_chunks.order(Arel.sql(order_clause))
+    results = PageChunk.nearest_neighbors(:embedding, question_embedding, distance: "euclidean").first(5)
 
-    results.map do |chunk|
-      heading = chunk.try(:heading) || "Section"
-      "#{heading}\n#{chunk.content.strip}"
+    results.map do |pc|
+      "Page #{pc.page} – #{pc.heading}\n#{pc.content}"
     end.join("\n---\n")[0..2000]
+  end
+
+  private
+
+  def normalise(vec)
+    norm = Math.sqrt(vec.map { |x| x * x }.sum)
+    norm.zero? ? vec : vec.map { |x| x / norm }
   end
 end

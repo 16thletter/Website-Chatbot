@@ -2,7 +2,7 @@ class ChatbotService
   def initialize(context, question)
     @question = question
     @prompt = PromptBuilder.build(context, question.title)
-    @url = ENV.fetch("LLAMA_RESPONSE_GENERATE_API", "http://localhost:11434/api/generate")
+    @url = "http://localhost:11434/api/generate"
   end
 
   def call
@@ -24,6 +24,6 @@ class ChatbotService
   end
 
   def body
-    { model: "llama2", prompt: @prompt, stream: false }.to_json
+    { model: "llama3.2", prompt: @prompt, stream: false, temperature: 0.3 }.to_json
   end
 end

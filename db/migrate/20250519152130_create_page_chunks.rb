@@ -3,7 +3,7 @@ class CreatePageChunks < ActiveRecord::Migration[8.0]
     create_table :page_chunks do |t|
       t.references :website, null: false, foreign_key: true
       t.text :content
-      t.column :embedding, :vector, limit: 4096
+      # t.column :embedding, :vector, limit: 384
 
       t.timestamps
     end

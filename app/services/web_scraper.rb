@@ -55,14 +55,25 @@ class WebScraper
     content = buffer.join("\n").squish
     return if content.blank?
 
-    embedding = OllamaEmbeddingService.embed(content)
+    words = content.split
+    max_words = 200
+    overlap = 50
+    step = max_words - overlap
 
-    PageChunk.create!(
-      website: @website,
-      heading: heading,
-      content: content,
-      embedding: embedding.to_s
-    )
+    words.each_slice(step).with_index do |slice, index|
+      chunk_words = words[index * step, max_words] || []
+      chunk_text = chunk_words.join(" ")
+      next if chunk_text.blank?
+
+      embedding = OllamaEmbeddingService.embed(chunk_text)
+
+      PageChunk.create!(
+        website: @website,
+        heading: heading,
+        content: chunk_text,
+        embedding: embedding.to_s
+      )
+    end
   rescue => e
     Rails.logger.error("Failed to save chunk: #{e.message}")
   end
